@@ -1,2 +1,3 @@
-# Blender-Measure-Aesthetics
-Measure image aesthetics based on technical parameters and attractiveness using Everypixel API
+# Measure Aesthetics
+
+A Blender3D add-on that measures image aesthetics based on technical parameters and attractiveness using Everypixel API.

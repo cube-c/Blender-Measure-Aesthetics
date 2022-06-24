@@ -22,6 +22,7 @@ import bpy
 import os
 import json
 import secrets
+import re
 from shutil import copyfile
 from pathlib import Path
 from datetime import datetime
@@ -46,7 +47,7 @@ def cache_filenames(context):
         return []
 
     filenames = list(reversed([f for f in os.listdir(bpy.path.abspath(cache_folder)) 
-        if os.path.splitext(f)[1] == '.png']))
+        if re.fullmatch('[0-9]{20}_[0-9]{4}.png', f)]))
 
     return filenames
 
@@ -74,7 +75,6 @@ def cache_previews(context):
                 enum_collections[filename] = (filename, name, '', thumb)
             enum_items.append(enum_collections[filename] + (index, ))
     except Exception as e:
-        print(e)
         return []
 
     return enum_items
@@ -162,6 +162,18 @@ class IMAGE_OT_MeasureAestheticsOperator(Operator):
         
         return {'FINISHED'}
 
+class IMAGE_OT_LoadAestheticsOperator(Operator):
+    bl_idname = 'aesthetics.load'
+    bl_label = 'Open Cached Image'
+    bl_description = 'Open cached image'
+    bl_options = {'REGISTER', 'UNDO'}
+
+    def execute(self, context):
+        filepath = os.path.join(context.scene.aesthetics.cache_folder,
+            context.window_manager.aesthetics.cache_images)
+        bpy.ops.image.open(filepath=filepath, relative_path=True)
+        return {'FINISHED'}
+
 class IMAGE_PT_Aesthetics(Panel):
     bl_label = 'Measure Aesthetics'
     bl_space_type = 'IMAGE_EDITOR'
@@ -214,6 +226,7 @@ class IMAGE_PT_AestheticsResult(Panel):
             if not aesthetics_temp.cache_images == '':
                 box = col2.box()
                 box.label(text='Quality: {:2.2f}%'.format(int(aesthetics_temp.cache_images[-8:-4]) / 100))
+                col2.operator(IMAGE_OT_LoadAestheticsOperator.bl_idname)
 
 class AestheticsPrefs(AddonPreferences):
     bl_idname = PKG
@@ -231,6 +244,7 @@ classes = (
     AestheticsCacheTemp,
     AestheticsCacheSettings,
     IMAGE_OT_MeasureAestheticsOperator,
+    IMAGE_OT_LoadAestheticsOperator,
     IMAGE_PT_Aesthetics,
     IMAGE_PT_AestheticsResult,
     AestheticsPrefs

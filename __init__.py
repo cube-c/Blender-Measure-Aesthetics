@@ -20,7 +20,7 @@ bl_info = {
     'name': 'Measure Aesthetics',
     "author": 'cubec',
     'blender': (3, 2, 0),
-    'version': (1, 1, 0),
+    'version': (1, 1, 1),
     'category': 'Render',
     'description': 'Measure image aesthetics based on technical parameters and attractiveness using Everypixel API',
     'doc_url': 'https://github.com/cube-c/Blender-Measure-Aesthetics',

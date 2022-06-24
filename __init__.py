@@ -20,30 +20,18 @@ bl_info = {
     'name': 'Measure Aesthetics',
     "author": 'cubec',
     'blender': (3, 2, 0),
-    'version': (1, 0, 0),
+    'version': (1, 1, 0),
     'category': 'Render',
     'description': 'Measure image aesthetics based on technical parameters and attractiveness using Everypixel API',
-    'doc_url': 'https://github.com/cube-c/Blender-Measure-Aesthetics/blob/master/README.md'
+    'doc_url': 'https://github.com/cube-c/Blender-Measure-Aesthetics',
+    'tracker_url': 'https://github.com/cube-c/Blender-Measure-Aesthetics/issues'
 }
 
 import bpy
-from .measure_aesthetics import *
-
-classes = (
-    EpAestheticsProperties,
-    IMAGE_OT_EpMeasureOperator,
-    IMAGE_PT_EpAesthetics,
-    EpAestheticsPrefs
-)
+from . import measure_aesthetics
 
 def register():
-    for cls in classes:
-        bpy.utils.register_class(cls)
-    
-    bpy.types.Image.ep_aesthetics = bpy.props.PointerProperty(type=EpAestheticsProperties)
+	measure_aesthetics.register()
 
 def unregister():
-    for cls in classes:
-        bpy.utils.unregister_class(cls)
-
-    del bpy.types.Image.ep_aesthetics
+	measure_aesthetics.unregister()

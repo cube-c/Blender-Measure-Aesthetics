@@ -16,20 +16,17 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-import numpy as np
-import requests
 import bpy
+import requests
 import os
 import json
 import secrets
 import re
 from shutil import copyfile
-from pathlib import Path
 from datetime import datetime
 
 preview_collections = {}
 enum_collections = {}
-enum_length = 0
 
 PKG = __package__
 
@@ -51,7 +48,7 @@ def cache_filenames(context):
 
     return filenames
 
-def cache_previews(context):
+def cache_previews(self, context):
     cache_folder = context.scene.aesthetics.cache_folder
     try:
         enum_items = []
@@ -79,18 +76,12 @@ def cache_previews(context):
 
     return enum_items
 
-def cache_previews_wrapper(self, context):
-    global enum_length
-    enum_items = cache_previews(context)
-    enum_length = len(enum_items)
-    return enum_items
-
 class AestheticsCacheTemp(PropertyGroup):
     quality: FloatProperty(name='Image Quality')
     status: StringProperty(name='Response Status')
     message: StringProperty(name='Response Message')
     cache_images: EnumProperty(
-        items=cache_previews_wrapper,
+        items=cache_previews,
         name='Cache Images'
     )
 
@@ -251,16 +242,20 @@ classes = (
 )
 
 def register():
+
+    import bpy
     for cls in classes:
         bpy.utils.register_class(cls)
     
     bpy.types.Scene.aesthetics = bpy.props.PointerProperty(type=AestheticsCacheSettings)
     bpy.types.WindowManager.aesthetics = bpy.props.PointerProperty(type=AestheticsCacheTemp)
 
+    import bpy.utils.previews
     pcoll = bpy.utils.previews.new()
     preview_collections['aesthetics'] = pcoll
 
 def unregister():
+
     for cls in classes:
         bpy.utils.unregister_class(cls)
 
